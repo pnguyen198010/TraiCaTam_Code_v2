@@ -5,7 +5,6 @@
 
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 
 #include "log_service.h"
 
