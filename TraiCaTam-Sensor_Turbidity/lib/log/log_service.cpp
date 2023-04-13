@@ -130,7 +130,7 @@ void Log_t::raw(const char *format)
     if(flg_disable) {return;}
 
     if(flg_upd) {
-        raw("\n");
+        LOG_PORT.print(F("\n"));
         flg_upd = false;
     }
 
