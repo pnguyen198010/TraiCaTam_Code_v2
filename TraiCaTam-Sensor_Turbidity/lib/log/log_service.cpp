@@ -169,7 +169,7 @@ void Log_t::inf(const char *format, ...)
     if(flg_disable) {return;}
 
     if(flg_upd) {
-        LOG_PORT.print("\n");
+        LOG_PORT.print(F("\n"));
         flg_upd = false;
     }
 
@@ -193,7 +193,7 @@ void Log_t::err(const char *format, ...)
     if(flg_disable) {return;}
 
     if(flg_upd) {
-        LOG_PORT.print("\n");
+        LOG_PORT.print(F("\n"));
         flg_upd = false;
     }
 
