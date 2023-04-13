@@ -37,11 +37,11 @@ class Log_t
     public: Log_t();
     public: Log_t(bool flg_disable);
 
-    public: inline void raw (const char *format);
-    public: inline void fmt (const char *format, ...);
-    public: inline void inf (const char *format, ...);
-    public: inline void err (const char *format, ...);
-    public: inline void upd (const char *format, ...);
+    public: void raw (const char *format);
+    public: void fmt (const char *format, ...);
+    public: void inf (const char *format, ...);
+    public: void err (const char *format, ...);
+    public: void upd (const char *format, ...);
 
     public: void enable();
     public: void disable();
