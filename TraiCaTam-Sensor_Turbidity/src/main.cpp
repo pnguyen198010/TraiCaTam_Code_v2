@@ -46,6 +46,7 @@ void loop()
 
   if(millis() - intv < TIME_TOGGLE){
     LOG.upd("This is log upd");
+    return;
   }
 
   if(flg_log){
