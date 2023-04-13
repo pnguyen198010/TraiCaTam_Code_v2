@@ -8,6 +8,7 @@
 #include <SoftwareSerial.h>
 
 #include "log_service.h"
+#include "turbidity.h"
 
 
 /* ==================================================
@@ -28,6 +29,7 @@
 void setup() 
 {
   Log_init();
+  Turbidity_init();
 }
 
 
