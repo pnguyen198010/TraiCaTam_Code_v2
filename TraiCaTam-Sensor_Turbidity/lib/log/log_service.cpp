@@ -255,8 +255,15 @@ void Log_init()
 {
 #ifdef LOG_PORT
 
+    uint32_t intv = millis();
+
     LOG_PORT.begin(LOG_BAUD_RATE);
-    delay(LOG_TIME_INIT);
+
+    while(millis() - intv < LOG_TIME_INIT){
+        if(Serial){
+            break;
+        }
+    }
 
     LOG_PORT.print(F("\n\n"));
 

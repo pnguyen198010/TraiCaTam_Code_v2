@@ -1,8 +1,10 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
+#include "log_service.h"
+
 void setup() {
-  // put your setup code here, to run once:
+
 }
 
 void loop() {
