@@ -178,7 +178,7 @@ void Log_t::inf(const char *format, ...)
 
     myPrintf("I (%lu) ", millis());
     myPrintf(format, args);
-    LOG_PORT.print("\n");
+    LOG_PORT.print(F("\n"));
 
     va_end(args);
 
@@ -202,7 +202,7 @@ void Log_t::err(const char *format, ...)
 
     myPrintf("E (%lu) ", millis());
     myPrintf(format, args);
-    LOG_PORT.print("\n");
+    LOG_PORT.print(F("\n"));
 
     va_end(args);
 
