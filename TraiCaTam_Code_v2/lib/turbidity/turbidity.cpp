@@ -328,3 +328,9 @@ void Turbidity_read()
 {
     sensor.read();
 }
+
+
+uint8_t Turbidity_get_state(uint8_t ind)
+{
+    return sensor.get_stateCurr();
+}
