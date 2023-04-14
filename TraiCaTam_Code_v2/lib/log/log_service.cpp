@@ -255,7 +255,7 @@ void Log_init()
 {
 #ifdef LOG_PORT
 
-    uint32_t intv = millis();
+    uint64_t intv = millis();
 
     LOG_PORT.begin(LOG_BAUD_RATE);
 
