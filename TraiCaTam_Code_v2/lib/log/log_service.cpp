@@ -49,7 +49,7 @@ static bool flg_upd = false;
 ** =============================================== */
 
 
-static void myPrintf(const char *format, ...);
+// static int myPrintf(const char *format, ...);
 
 
 /* ==================================================
@@ -58,46 +58,47 @@ static void myPrintf(const char *format, ...);
 ** =============================================== */
 
 
-static void myPrintf(const char *format, ...)
-{
-#ifdef LOG_PORT
+// static int myPrintf(const char *format, ...)
+// {
+// #ifdef LOG_PORT
 
-    char loc_buf[64];
-    char * temp = loc_buf;
+//     char loc_buf[64];
+//     char * temp = loc_buf;
 
-    va_list arg;
-    va_list copy;
+//     va_list arg;
+//     va_list copy;
 
-    va_start(arg, format);
-    va_copy(copy, arg);
+//     va_start(arg, format);
+//     va_copy(copy, arg);
 
-    int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
-    va_end(copy);
+//     int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
+//     va_end(copy);
 
-    if(len < 0) {
-        va_end(arg);
-        return;
-    };
+//     if(len < 0) 
+//     {
+//         va_end(arg);
+//         return 0;
+//     };
 
-    if((unsigned long)len >= sizeof(loc_buf))
-    {
-        temp = (char*) malloc(len+1);
+//     if(len >= sizeof(loc_buf))
+//     {
+//         temp = (char*) malloc(len+1);
+//         if(temp == NULL) {
+//             va_end(arg);
+//             return 0;
+//         }
+//         len = vsnprintf(temp, len+1, format, arg);
+//     }
 
-        if(temp == NULL) {
-            va_end(arg);
-            return;
-        }
+//     va_end(arg);
+//     len = LOG_PORT.write((uint8_t*)temp, len);
+//     if(temp != loc_buf){
+//         free(temp);
+//     }
+//     return len;
 
-        len = vsnprintf(temp, len+1, format, arg);
-    }
-
-    va_end(arg);
-    LOG_PORT.print(temp);
-
-    if(temp != loc_buf) {free(temp);}
-
-#endif
-}
+// #endif
+// }
 
 
 /* ==================================================
@@ -151,13 +152,6 @@ void Log_t::fmt(const char *format, ...)
         flg_upd = false;
     }
 
-    va_list args;
-    va_start(args, format);
-
-    myPrintf(format, args);
-
-    va_end(args);
-
 #endif
 }
 
@@ -173,14 +167,45 @@ void Log_t::inf(const char *format, ...)
         flg_upd = false;
     }
 
-    va_list args;
-    va_start(args, format);
+    LOG_PORT.print(F("I ("));
+    LOG_PORT.print(millis());
+    LOG_PORT.print(F(") "));
 
-    myPrintf("I (%lu) ", millis());
-    myPrintf(format, args);
+    char loc_buf[64];
+    char * temp = loc_buf;
+
+    va_list arg;
+    va_list copy;
+
+    va_start(arg, format);
+    va_copy(copy, arg);
+
+    int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
+    va_end(copy);
+
+    if(len < 0) {
+        va_end(arg);
+        return;
+    };
+
+    if((unsigned long)len >= sizeof(loc_buf))
+    {
+        temp = (char*) malloc(len+1);
+
+        if(temp == NULL) {
+            va_end(arg);
+            return;
+        }
+
+        len = vsnprintf(temp, len+1, format, arg);
+    }
+
+    va_end(arg);
+    LOG_PORT.print(temp);
+
+    if(temp != loc_buf) {free(temp);}
+
     LOG_PORT.print(F("\n"));
-
-    va_end(args);
 
 #endif
 }
@@ -197,14 +222,45 @@ void Log_t::err(const char *format, ...)
         flg_upd = false;
     }
 
-    va_list args;
-    va_start(args, format);
+    LOG_PORT.print(F("E ("));
+    LOG_PORT.print(millis());
+    LOG_PORT.print(F(") "));
 
-    myPrintf("E (%lu) ", millis());
-    myPrintf(format, args);
+    char loc_buf[64];
+    char * temp = loc_buf;
+
+    va_list arg;
+    va_list copy;
+
+    va_start(arg, format);
+    va_copy(copy, arg);
+
+    int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
+    va_end(copy);
+
+    if(len < 0) {
+        va_end(arg);
+        return;
+    };
+
+    if((unsigned long)len >= sizeof(loc_buf))
+    {
+        temp = (char*) malloc(len+1);
+
+        if(temp == NULL) {
+            va_end(arg);
+            return;
+        }
+
+        len = vsnprintf(temp, len+1, format, arg);
+    }
+
+    va_end(arg);
+    LOG_PORT.print(temp);
+
+    if(temp != loc_buf) {free(temp);}
+
     LOG_PORT.print(F("\n"));
-
-    va_end(args);
 
 #endif
 }
@@ -220,14 +276,45 @@ void Log_t::upd(const char *format, ...)
         flg_upd = true;
     }
 
-    va_list args;
-    va_start(args, format);
+    LOG_PORT.print(F("U ("));
+    LOG_PORT.print(millis());
+    LOG_PORT.print(F(") "));
 
-    myPrintf("U (%lu) ", millis());
-    myPrintf(format, args);
-    LOG_PORT.print("\r");
+    char loc_buf[64];
+    char * temp = loc_buf;
 
-    va_end(args);
+    va_list arg;
+    va_list copy;
+
+    va_start(arg, format);
+    va_copy(copy, arg);
+
+    int len = vsnprintf(temp, sizeof(loc_buf), format, copy);
+    va_end(copy);
+
+    if(len < 0) {
+        va_end(arg);
+        return;
+    };
+
+    if((unsigned long)len >= sizeof(loc_buf))
+    {
+        temp = (char*) malloc(len+1);
+
+        if(temp == NULL) {
+            va_end(arg);
+            return;
+        }
+
+        len = vsnprintf(temp, len+1, format, arg);
+    }
+
+    va_end(arg);
+    LOG_PORT.print(temp);
+
+    if(temp != loc_buf) {free(temp);}
+
+    LOG_PORT.print(F("\r"));
 
 #endif
 }
@@ -264,7 +351,6 @@ void Log_init()
             break;
         }
     }
-
     LOG_PORT.print(F("\n\n"));
 
 #endif
