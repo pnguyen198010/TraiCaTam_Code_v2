@@ -35,5 +35,5 @@ void setup()
 
 void loop() 
 {
-
+  Turbidity_read();
 }
