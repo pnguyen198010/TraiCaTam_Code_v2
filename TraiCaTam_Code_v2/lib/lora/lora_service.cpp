@@ -257,3 +257,9 @@ void Lora_upd_turbidity()
 
 	intv = millis();
 }
+
+
+void Lora_send_turbidityState()
+{
+	
+}

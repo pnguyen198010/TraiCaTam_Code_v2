@@ -45,6 +45,8 @@ void Lora_init();
 
 void Lora_upd_turbidity();
 
+void Lora_send_turbidityState();
+
 
 /* ==================================================
 ** Extern variables
