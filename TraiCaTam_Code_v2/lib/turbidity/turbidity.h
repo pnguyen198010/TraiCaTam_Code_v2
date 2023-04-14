@@ -17,8 +17,8 @@
 ** =============================================== */
 
 
-typedef void (*cb_onTurbid_t) (uint64_t dur);
-typedef void (*cb_onClear_t)  (uint64_t dur);
+typedef void (*cb_onTurbid_t) (uint32_t dur);
+typedef void (*cb_onClear_t)  (uint32_t dur);
 typedef void (*cb_onChange_t) ();
 
 
@@ -56,8 +56,8 @@ class turbidity_t
     public: void onChange (cb_onChange_t cb);
 
     private: uint8_t  get_stateCurr();
-    private: uint64_t get_durTurbid();
-    private: uint64_t get_durClear();
+    private: uint32_t get_durTurbid();
+    private: uint32_t get_durClear();
 
     public: bool is_enable();
     public: bool is_turbid();
@@ -73,9 +73,9 @@ class turbidity_t
 
     private: uint8_t  state_prev;
 
-    private: uint8_t  time_debounce_prev;
-    private: uint64_t time_turbid_prev;
-    private: uint64_t time_clear_prev;
+    private: uint32_t  time_debounce_prev;
+    private: uint32_t time_turbid_prev;
+    private: uint32_t time_clear_prev;
 
     private: uint8_t  flg_disable;
 

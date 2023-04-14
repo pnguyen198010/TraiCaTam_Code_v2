@@ -49,11 +49,11 @@ static const uint8_t STATE_TURBID  = LOW;
 static const uint8_t STATE_CLEAR   = !STATE_TURBID;
 static const uint8_t STATE_DEBOUNCE = 3;
 
-static const uint64_t TIME_DEBOUNCE = 2UL*1000UL;
+static const uint32_t TIME_DEBOUNCE = 2UL*1000UL;
 
 
 static Log_t       LOG;
-static turbidity_t sensor(VCC, PIN);
+static turbidity_t sensor(PIN, VCC);
 
 
 /* ==================================================
@@ -65,8 +65,8 @@ static turbidity_t sensor(VCC, PIN);
 static uint8_t get_stateRaw(uint8_t pin);
 
 static void fnc_onChange();
-static void fnc_onTurbid(uint64_t dur);
-static void fnc_onClear(uint64_t dur);
+static void fnc_onTurbid(uint32_t dur);
+static void fnc_onClear(uint32_t dur);
 
 
 /* ==================================================
@@ -77,7 +77,7 @@ static void fnc_onClear(uint64_t dur);
 
 inline static uint8_t get_stateRaw(uint8_t pin)
 {
-    return digitalRead(pin)==STATE_TURBID ? true : false;
+    return digitalRead(pin) ? true : false;
 }
 
 
@@ -87,15 +87,15 @@ void fnc_onChange()
 }
 
 
-void fnc_onTurbid(uint64_t dur)
+void fnc_onTurbid(uint32_t dur)
 {
-    LOG.upd("[Turbidity] turbid duration: %u", dur);
+    // LOG.upd("[Turbidity] turbid duration: %u", dur);
 }
 
 
-void fnc_onClear(uint64_t dur)
+void fnc_onClear(uint32_t dur)
 {
-    LOG.upd("[Turbidity] clear duration: %u", dur);
+    // LOG.upd("[Turbidity] clear duration: %u", dur);
 }
 
 
@@ -154,42 +154,47 @@ void turbidity_t::onChange(cb_onChange_t cb)
 
 uint8_t turbidity_t::get_stateCurr()
 {
-    static uint8_t state_debounce = state_prev;
-           uint8_t state_curr     = get_stateRaw(pin);
+    static uint8_t state_curr     = state_prev;
+           uint8_t state_debounce = get_stateRaw(pin);
 
-    if(state_debounce != state_curr)
+    if(state_curr != state_debounce)
     {
-        state_debounce     = state_curr;
+        state_curr         = state_debounce;
         time_debounce_prev = millis();
+
+        LOG.upd("[1] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
         return STATE_DEBOUNCE;
     }
 
     if(millis() - time_debounce_prev < TIME_DEBOUNCE){
+
+        LOG.upd("[2] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
         return STATE_DEBOUNCE;
     }
 
+    LOG.upd("[3] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
     return state_curr;
 }
 
 
-uint64_t turbidity_t::get_durTurbid()
+uint32_t turbidity_t::get_durTurbid()
 {
     if(is_turbid()){
         return millis() - time_turbid_prev;
     }
 
-    uint64_t clear = millis() - time_clear_prev;
+    uint32_t clear = millis() - time_clear_prev;
     return millis() - time_turbid_prev - clear;
 }
 
 
-uint64_t turbidity_t::get_durClear()
+uint32_t turbidity_t::get_durClear()
 {
     if(is_clear()){
         return millis() - time_clear_prev;
     }
 
-    uint64_t dur_turbid = millis() - time_turbid_prev;
+    uint32_t dur_turbid = millis() - time_turbid_prev;
     return millis() - time_clear_prev - dur_turbid;
 }
 
@@ -254,9 +259,7 @@ void turbidity_t::read()
     if(state_curr == STATE_TURBID
     && state_curr == state_prev)
     {
-
-        LOG.upd("[Turbidity] turbid duration: %lu - %lu = %lu", millis(), time_turbid_prev, millis() - time_turbid_prev);
-        if(cb_onTurbid) {cb_onTurbid((uint64_t)millis() - time_turbid_prev);}
+        if(cb_onTurbid) {cb_onTurbid((uint32_t)millis() - time_turbid_prev);}
         return;
     }
 
@@ -276,7 +279,6 @@ void turbidity_t::read()
     if(state_curr == STATE_CLEAR
     && state_curr == state_prev)
     {
-        LOG.upd("[Turbidity] clear duration: %lu - %lu = %lu", millis(), time_clear_prev, millis() - time_clear_prev);
         if(cb_onClear) {cb_onClear(millis() - time_turbid_prev);}
         return;
     }
@@ -320,9 +322,9 @@ void Turbidity_init()
     LOG.raw("\n\n");
     LOG.inf("[Turbidity] start init");
 
-    // sensor.onChange(fnc_onChange);
-    // sensor.onTurbid(fnc_onTurbid);
-    // sensor.onClear (fnc_onClear);
+    sensor.onChange(fnc_onChange);
+    sensor.onTurbid(fnc_onTurbid);
+    sensor.onClear (fnc_onClear);
 
     LOG.inf("[Turbidiy] end init");
 }
