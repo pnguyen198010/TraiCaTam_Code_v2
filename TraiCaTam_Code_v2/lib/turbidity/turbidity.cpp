@@ -83,7 +83,7 @@ inline static uint8_t get_stateRaw(uint8_t pin)
 
 void fnc_onChange()
 {
-    LOG.raw("");
+    //
 }
 
 
@@ -161,18 +161,13 @@ uint8_t turbidity_t::get_stateCurr()
     {
         state_curr         = state_debounce;
         time_debounce_prev = millis();
-
-        LOG.upd("[1] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
         return STATE_DEBOUNCE;
     }
 
     if(millis() - time_debounce_prev < TIME_DEBOUNCE){
-
-        LOG.upd("[2] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
         return STATE_DEBOUNCE;
     }
-
-    LOG.upd("[3] pre: %d | curr: %d | debounce: %d | dur: %u", state_prev, state_curr, state_debounce, (uint32_t)millis() - time_debounce_prev);
+    
     return state_curr;
 }
 
