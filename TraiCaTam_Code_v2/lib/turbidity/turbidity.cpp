@@ -33,7 +33,8 @@
 ** =============================================== */
 
 
-//
+const uint8_t STATE_TURBID  = LOW;
+const uint8_t STATE_CLEAR   = !STATE_TURBID;
 
 
 /* ==================================================
@@ -45,8 +46,6 @@
 static const int8_t  VCC = 2;
 static const uint8_t PIN = 4;
 
-static const uint8_t STATE_TURBID  = LOW;
-static const uint8_t STATE_CLEAR   = !STATE_TURBID;
 static const uint8_t STATE_DEBOUNCE = 3;
 
 static const uint32_t TIME_DEBOUNCE = 2UL*1000UL;
@@ -328,4 +327,10 @@ void Turbidity_init()
 void Turbidity_read()
 {
     sensor.read();
+}
+
+
+uint8_t Turbidity_get_state(uint8_t ind)
+{
+    return sensor.get_stateCurr();
 }

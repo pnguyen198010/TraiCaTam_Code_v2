@@ -55,7 +55,7 @@ class turbidity_t
     public: void onClear  (cb_onClear_t  cb);
     public: void onChange (cb_onChange_t cb);
 
-    private: uint8_t  get_stateCurr();
+    public:  uint8_t  get_stateCurr();
     private: uint32_t get_durTurbid();
     private: uint32_t get_durClear();
 
@@ -95,6 +95,8 @@ class turbidity_t
 void Turbidity_init();
 void Turbidity_read();
 
+uint8_t Turbidity_get_state(uint8_t ind=0);
+
 
 /* ==================================================
 ** Extern variables
@@ -102,7 +104,8 @@ void Turbidity_read();
 ** =============================================== */
 
 
-//
+extern const uint8_t STATE_TURBID;
+extern const uint8_t STATE_CLEAR;
 
 
 #endif
