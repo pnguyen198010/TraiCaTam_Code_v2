@@ -45,7 +45,7 @@ void Lora_init();
 
 void Lora_upd_turbidity();
 
-void Lora_send_turbidityState();
+void Lora_send_turbidityState(uint8_t state);
 
 
 /* ==================================================

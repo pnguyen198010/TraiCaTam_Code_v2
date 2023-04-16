@@ -240,26 +240,27 @@ void Lora_init()
 
 void Lora_upd_turbidity()
 {
-	static uint32_t intv = millis();
+	// static uint32_t intv = millis();
 
-	if(millis() - intv < TIME_UPD_TURBIDITY) {return;}
+	// if(millis() - intv < TIME_UPD_TURBIDITY) {return;}
 
-	uint8_t turbidity = Turbidity_is_true();
-	String  message   = String(LORA_ID_SLAVE) + "-" + String(turbidity);
+	// uint8_t turbidity = Turbidity_is_true();
+	// String  message   = String(LORA_ID_SLAVE) + "-" + String(turbidity);
 
-	ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
+	// ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
 
-	Serial.print("Lora message: ");
-	Serial.println(message);
+	// Serial.print("Lora message: ");
+	// Serial.println(message);
 	
     // Serial.println("Send message to 00 03 04");
     // Serial.println(rs.getResponseDescription());
 
-	intv = millis();
+	// intv = millis();
 }
 
 
-void Lora_send_turbidityState()
+void Lora_send_turbidityState(uint8_t state)
 {
-	
+	String message = "";
+	ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
 }

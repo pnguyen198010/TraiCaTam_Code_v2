@@ -95,8 +95,6 @@ class turbidity_t
 void Turbidity_init();
 void Turbidity_read();
 
-uint8_t Turbidity_get_state(uint8_t ind=0);
-
 
 /* ==================================================
 ** Extern variables
@@ -104,8 +102,7 @@ uint8_t Turbidity_get_state(uint8_t ind=0);
 ** =============================================== */
 
 
-extern const uint8_t STATE_TURBID;
-extern const uint8_t STATE_CLEAR;
+//
 
 
 #endif

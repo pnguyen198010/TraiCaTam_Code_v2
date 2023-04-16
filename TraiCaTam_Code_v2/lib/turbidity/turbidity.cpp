@@ -7,6 +7,7 @@
 #include "turbidity.h"
 
 #include "log_service.h"
+#include "lora_service.h"
 
 
 /* ==================================================
@@ -46,6 +47,8 @@ const uint8_t STATE_CLEAR   = !STATE_TURBID;
 static const int8_t  VCC = 2;
 static const uint8_t PIN = 4;
 
+static const uint8_t STATE_TURBID;
+static const uint8_t STATE_CLEAR;
 static const uint8_t STATE_DEBOUNCE = 3;
 
 static const uint32_t TIME_DEBOUNCE = 2UL*1000UL;
@@ -82,7 +85,7 @@ inline static uint8_t get_stateRaw(uint8_t pin)
 
 void fnc_onChange()
 {
-    //
+    Lora_send_turbidityState(sensor.is_turbid() ? STATE_TURBID : STATE_CLEAR);
 }
 
 
@@ -327,10 +330,4 @@ void Turbidity_init()
 void Turbidity_read()
 {
     sensor.read();
-}
-
-
-uint8_t Turbidity_get_state(uint8_t ind)
-{
-    return sensor.get_stateCurr();
 }
