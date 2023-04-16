@@ -33,6 +33,30 @@
 #define LORA_ADDH_GATEWAY	0x1
 #define LORA_CHAN_GATEWAY	0x18
 
+// Messages of sensor 1: state
+#define MESSAGE_SENSOR1_CLEAR	0x00
+#define MESSAGE_SENSOR1_TURBID	0x01
+
+// Messages of sensor 2: state
+#define MESSAGE_SENSOR2_CLEAR	0x10
+#define MESSAGE_SENSOR2_TURBID	0x11
+
+// Messages of sensor 3: state
+#define MESSAGE_SENSOR3_CLEAR	0x20
+#define MESSAGE_SENSOR4_TURBID	0x21
+
+// Messages of gateway: which bell will alert
+#define MESSAGE_ALERT_BELL1		0x30
+#define MESSAGE_ALERT_BELL2		0x31
+
+// Messages of bell 1: heart beat
+#define MESSAGE_BELL1_LARGE		0x40
+#define MESSAGE_BELL1_SMALL		0x41
+
+// Messages of bell 2: heart beat
+#define MESSAGE_BELL2_LARGE		0x42
+#define MESSAGE_BELL2_SMALL		0x43
+
 
 /* ==================================================
 ** Type definition
