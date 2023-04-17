@@ -49,7 +49,8 @@ static const uint8_t PIN = 4;
 
 static const uint8_t STATE_DEBOUNCE = 3;
 
-static const uint32_t TIME_DEBOUNCE = 2UL*1000UL;
+static const uint32_t TIME_DEBOUNCE  =  5UL*1000UL;
+static const uint32_t TIME_HEARTBEAT = 60UL*1000UL;
 
 
 static Log_t       LOG;
@@ -89,13 +90,15 @@ void fnc_onChange()
 
 void fnc_onTurbid(uint32_t dur)
 {
-    // LOG.upd("[Turbidity] turbid duration: %u", dur);
+    if(dur < TIME_HEARTBEAT) {return;}
+    Lora_send_turbidityState(sensor.is_enable() ? STATE_TURBID : STATE_CLEAR);
 }
 
 
 void fnc_onClear(uint32_t dur)
 {
-    // LOG.upd("[Turbidity] clear duration: %u", dur);
+    if(dur < TIME_HEARTBEAT) {return;}
+    Lora_send_turbidityState(STATE_CLEAR);
 }
 
 
