@@ -316,17 +316,20 @@ void handle_package(uint8_t package)
 
 		case MESSAGE_SENSOR1_TURBID:
 		case MESSAGE_SENSOR2_TURBID:
-		// Cảnh báo chuông 1
+		control_bell1(HIGH);
 		break;
 
 		case MESSAGE_SENSOR3_TURBID:
-		// Cảnh báo chuông 2
+		control_bell2(HIGH);
 		break;
 
 		case MESSAGE_SENSOR1_CLEAR:
 		case MESSAGE_SENSOR2_CLEAR:
+		control_bell1(LOW);
+		break;
+
 		case MESSAGE_SENSOR3_CLEAR:
-		//
+		control_bell2(LOW);
 		break;
 	}
 }
@@ -339,13 +342,22 @@ void control_bell1(bool on)
 		uint8_t package[1];
 	} message;
 
-	*(uint8_t*)(message.package) = on ? MESSAGE_ALERT_BELL1 : MESSAGE_SENSOR1_TURBID;
+	*(uint8_t*)(message.package) = on ? MESSAGE_TURN_ON_BELL1 : MESSAGE_TURN_OFF_BELL1;
+
+	e32ttl100.sendBroadcastFixedMessage(CHAN_BELL1, &message, sizeof(message_t));
 }
 
 
 void control_bell2(bool on)
 {
+	struct message_t
+	{
+		uint8_t package[1];
+	} message;
 
+	*(uint8_t*)(message.package) = on ? MESSAGE_TURN_ON_BELL2 : MESSAGE_TURN_OFF_BELL2;
+
+	e32ttl100.sendBroadcastFixedMessage(CHAN_BELL2, &message, sizeof(message_t));
 }
 
 
