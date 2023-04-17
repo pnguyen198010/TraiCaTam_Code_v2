@@ -119,8 +119,8 @@
 
 struct message_t
 {
-	byte package[4];
-};
+	byte package[1];
+} message;
 
 
 /* ==================================================
@@ -297,7 +297,10 @@ void Lora_init()
 
 void Lora_send_turbidityState(uint8_t state)
 {
-	message_t message;
+	struct message_t
+	{
+		uint8_t package[1];
+	} message;
 
 	#if  LORA_ADDL == ADDL_SENSOR1
 	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
