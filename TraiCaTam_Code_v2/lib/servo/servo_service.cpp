@@ -20,7 +20,6 @@
 #define SERVO_PIN           9
 
 #define SERVO_NUM_SWEEP     2
-#define SERVO_TIME_PER_POS  15
 
 
 /* ==================================================
@@ -47,12 +46,18 @@
 ** =============================================== */
 
 
+// static const float TIME_SWEEP = (float) SERVO_NUM_SWEEP * 360 * TIME_PER_POS / 1000;
+static const uint32_t TIME_WAIT_SWEEP = 1 * 10 * 1000;
+static const uint32_t TIME_PER_POS    = 1 * 10 * 1000;
+static const uint32_t TIME_180_POS    = 180 * TIME_PER_POS;
+
+
 static Servo servo;
 
-static int16_t pos = 0;
 
-// static const float TIME_SWEEP = (float) SERVO_NUM_SWEEP * 360 * SERVO_TIME_PER_POS / 1000;
-static const uint32_t TIME_WAIT_SWEEP = 1 * 10 * 1000;
+static int16_t pos = 0;
+static uint8_t count_sweep = 0;
+
 
 
 /* ==================================================
@@ -85,48 +90,45 @@ void Servo_init()
 
     pos = servo.read();
     servo.write(pos);
-    delay(pos*SERVO_TIME_PER_POS);
+    delay(pos*TIME_PER_POS);
 }
 
 
 void Servo_upd_pos()
 {
     static uint32_t intv_wait_sweep = millis();
-    static uint32_t intv_per_pos = millis();
+    static uint32_t intv_180_pos    = millis();
 
-    if(millis() - intv_wait_sweep < TIME_WAIT_SWEEP) {return;}
-
-    Turbidity_disable();
-
-    for(uint8_t i=0; i<SERVO_NUM_SWEEP; ++i)
+    if(millis() - intv_wait_sweep >= TIME_WAIT_SWEEP
+    && count_sweep == 0) 
     {
-        Serial.print(millis());
-        Serial.print(" [Servo] start ");
-        Serial.println(i);
-
-        for(pos=0; pos<=180; ++pos){
-            servo.write(pos);
-            delay(SERVO_TIME_PER_POS);
-
-            // Serial.print(millis());
-            // Serial.print(" \t pos: ");
-            // Serial.println(pos);
-        }
-
-        for(pos=180; pos>=0; --pos){
-            servo.write(pos);
-            delay(SERVO_TIME_PER_POS);
-
-            // Serial.print(millis());
-            // Serial.print(" \t pos: ");
-            // Serial.println(pos);
-        }
-
-        Serial.print(millis());
-        Serial.print(" Servo] end ");
-        Serial.println(i);
+        Turbidity_disable();
+        count_sweep  = 2*SERVO_NUM_SWEEP;
+        intv_180_pos = millis();
     }
 
-    Turbidity_enable();
-    intv = millis();
+    if(count_sweep != 0)
+    {
+        uint32_t dur = millis() - intv_180_pos;
+
+        if(dur > TIME_180_POS)
+        {
+            count_sweep -= 1;
+            intv_180_pos = millis();
+            dur          = 0;
+        }
+
+        if(count_sweep != 0)
+        {
+            pos = map(pos, dur, TIME_180_POS, 0, 180);
+            pos = count_sweep%2 == 1 ? pos : 180 - pos;
+            servo.write(pos);
+        }
+    }
+
+    if(count_sweep == 0)
+    {
+        Turbidity_enable();
+        intv_wait_sweep = millis();
+    }
 }
