@@ -137,7 +137,7 @@ typedef enum
 
 struct message_t
 {
-	byte package[1];
+	uint8_t package[1];
 };
 
 
@@ -175,6 +175,9 @@ static void printModuleInformation(struct ModuleInformation moduleInformation);
 
 static void handle_hearbeat(uint8_t package);
 static void handle_package(uint8_t package);
+
+static void control_bell1(bool on);
+static void control_bell2(bool on);
 
 
 /* ==================================================
@@ -306,7 +309,6 @@ void handle_package(uint8_t package)
 		case MESSAGE_BELL1_SMALL:
 		case MESSAGE_BELL2_LARGE:
 		case MESSAGE_BELL2_SMALL:
-		//
 		break;
 
 		case MESSAGE_SENSOR1_TURBID:
@@ -324,6 +326,23 @@ void handle_package(uint8_t package)
 		//
 		break;
 	}
+}
+
+
+void control_bell1(bool on)
+{
+	struct message_t
+	{
+		uint8_t package[1];
+	} message;
+
+	*(uint8_t*)(message.package) = on ? MESSAGE_ALERT_BELL1 : MESSAGE_SENSOR1_TURBID;
+}
+
+
+void control_bell2(bool on)
+{
+
 }
 
 
