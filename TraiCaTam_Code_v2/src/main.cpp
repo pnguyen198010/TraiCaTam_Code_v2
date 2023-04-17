@@ -7,6 +7,7 @@
 #include <Arduino.h>
 
 #include "log_service.h"
+#include "turbidity.h"
 
 
 /* ==================================================
@@ -27,10 +28,11 @@
 void setup() 
 {
   Log_init();
+  Turbidity_init();
 }
 
 
 void loop() 
 {
-  
+  Turbidity_read();
 }
