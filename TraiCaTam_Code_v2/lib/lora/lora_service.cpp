@@ -287,52 +287,6 @@ void Lora_init()
 }
 
 
-// ResponseStatus Lora_send_fixedMessage(byte ADDH, byte ADDL, byte CHAN, String message)
-// {
-//     ResponseStatus rs = e32ttl100.sendFixedMessage(ADDH, ADDL, CHAN, message);
-
-//     // Serial.println("Send message to 00 03 04");
-//     // Serial.println(rs.getResponseDescription());
-
-//     return rs;
-// }
-
-
-// void Lora_receive_fixedMessage()
-// {
-//     if (e32ttl100.available() > 1)
-//     {
-//         ResponseContainer rs = e32ttl100.receiveMessage();
-//         // First of all get the data
-//         String message = rs.data;
-
-//         Serial.println(rs.status.getResponseDescription());
-//         Serial.println(message);
-//     }
-// }
-
-
-void Lora_upd_turbidity()
-{
-	// static uint32_t intv = millis();
-
-	// if(millis() - intv < TIME_UPD_TURBIDITY) {return;}
-
-	// uint8_t turbidity = Turbidity_is_true();
-	// String  message   = String(LORA_ID_SLAVE) + "-" + String(turbidity);
-
-	// ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
-
-	// Serial.print("Lora message: ");
-	// Serial.println(message);
-	
-    // Serial.println("Send message to 00 03 04");
-    // Serial.println(rs.getResponseDescription());
-
-	// intv = millis();
-}
-
-
 void Lora_send_turbidityState(uint8_t state)
 {
 	#if  LORA_ADDL == ADDL_SENSOR1
