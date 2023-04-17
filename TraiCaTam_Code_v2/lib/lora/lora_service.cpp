@@ -28,8 +28,8 @@
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
-// #define THIS_IS_LORA_OF_GATEWAY
-#define THIS_IS_LORA_OF_SENSOR1
+#define THIS_IS_LORA_OF_GATEWAY
+// #define THIS_IS_LORA_OF_SENSOR1
 // #define THIS_IS_LORA_OF_SENSOR2
 // #define THIS_IS_LORA_OF_SENSOR3
 // #define THIS_IS_LORA_OF_BELL1_LARGE
@@ -119,7 +119,7 @@
 
 struct message_t
 {
-	byte package[1];
+	byte package[4];
 };
 
 
@@ -311,4 +311,17 @@ void Lora_send_turbidityState(uint8_t state)
 	#endif
 
 	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
+}
+
+
+void Lora_receive_structComplex()
+{
+    if (e32ttl100.available() > 0)
+	{
+        ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
+        message_t message = *(message_t*) rsc.data;
+		
+		LOG.inf("[Lora] receive message: '%02x'", message.package);
+        free(rsc.data);
+    }
 }
