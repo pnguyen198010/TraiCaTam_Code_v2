@@ -311,4 +311,7 @@ void Lora_send_turbidityState(uint8_t state)
 	#endif
 
 	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
+
+    // ResponseStatus rs = e32ttl100.sendFixedMessage(ADDH_GATEWAY,ADDL_GATEWAY,CHAN_GATEWAY,&message, sizeof(message_t));
+    // Serial.println(rs.getResponseDescription());
 }
