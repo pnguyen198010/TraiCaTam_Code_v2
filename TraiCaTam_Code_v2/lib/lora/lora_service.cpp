@@ -7,7 +7,9 @@
 #include "lora_service.h"
 #include "lora_address.h"
 
-#include "turbidity.h"
+#include <LoRa_E32.h>
+
+#include "log_service.h"
 
 
 /* ==================================================
@@ -16,16 +18,17 @@
 ** =============================================== */
 
 
-#define LORA_RX         5
-#define LORA_TX         6
-#define LORA_AUX        4
-#define LORA_M0         7
-#define LORA_M1         8
+#define LORA_RX         16
+#define LORA_TX         17
+#define LORA_AUX        21
+#define LORA_M0         18
+#define LORA_M1         19
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
-// #define THIS_IS_LORA_OF_GATEWAY
-#define THIS_IS_LORA_OF_SENSOR1
+
+#define THIS_IS_LORA_OF_GATEWAY
+// #define THIS_IS_LORA_OF_SENSOR1
 // #define THIS_IS_LORA_OF_SENSOR2
 // #define THIS_IS_LORA_OF_SENSOR3
 // #define THIS_IS_LORA_OF_BELL1_LARGE
@@ -92,19 +95,28 @@
 
 // Messages of sensor 3: state
 #define MESSAGE_SENSOR3_CLEAR	0x20
-#define MESSAGE_SENSOR4_TURBID	0x21
+#define MESSAGE_SENSOR3_TURBID	0x21
 
 // Messages of gateway: which bell will alert
-#define MESSAGE_ALERT_BELL1		0x30
-#define MESSAGE_ALERT_BELL2		0x31
+#define MESSAGE_TURN_OFF_BELL1	0x30
+#define MESSAGE_TURN_ON_BELL1	0x31
+
+#define MESSAGE_TURN_OFF_BELL2	0x40
+#define MESSAGE_TURN_ON_BELL2	0x41
 
 // Messages of bell 1: heart beat
-#define MESSAGE_BELL1_LARGE		0x40
-#define MESSAGE_BELL1_SMALL		0x41
+#define MESSAGE_BELL1_LARGE		0x50
+#define MESSAGE_BELL1_SMALL		0x51
 
 // Messages of bell 2: heart beat
-#define MESSAGE_BELL2_LARGE		0x42
-#define MESSAGE_BELL2_SMALL		0x43
+#define MESSAGE_BELL2_LARGE		0x52
+#define MESSAGE_BELL2_SMALL		0x53
+
+
+#define LORA_NUM_CLIENT			7
+#define LORA_NUM_SENSOR			3
+#define LORA_NUM_BELL_LARGE		2
+#define LORA_NUM_BELL_SMALL		2
 
 
 /* ==================================================
@@ -113,7 +125,23 @@
 ** =============================================== */
 
 
-//
+typedef enum
+{
+	IND_SENSOR1 = 0,
+	IND_SENSOR2,
+	IND_SENSOR3,
+	IND_BELL1_LARGE,
+	IND_BELL1_SMALL,
+	IND_BELL2_LARGE,
+	IND_BELL2_SMALL,
+	
+} ind_client_t;
+
+
+struct message_t
+{
+	uint8_t package[1];
+};
 
 
 /* ==================================================
@@ -131,21 +159,12 @@
 ** =============================================== */
 
 
-// static const byte LORA_RX        = 3;
-// static const byte LORA_TX        = 4;
-// static const byte LORA_AUX       = 5;
-// static const byte LORA_M0        = 5;
-// static const byte LORA_M1        = 6;
+static const uint32_t TIME_HEARTBEAT = 60*1000;
 
-// static const byte LORA_ADDL      = 0x0;
-// static const byte LORA_ADDH      = 0x2;
-// static const byte LORA_CHAN      = 0x19;
+static uint32_t intv_heartbeat[LORA_NUM_CLIENT];
 
-// static const uint32_t TIME_UPD_TURBIDITY = 1 * 60 * 1000;
-static const uint32_t TIME_UPD_TURBIDITY = 60 * 1000;
-
-static SoftwareSerial mySerial(LORA_RX, LORA_TX);
-static LoRa_E32 e32ttl100(&mySerial, LORA_BAUD_RATE);
+static Log_t LOG;
+static LoRa_E32 e32ttl100(&Serial2, LORA_BAUD_RATE);
 
 
 /* ==================================================
@@ -155,8 +174,13 @@ static LoRa_E32 e32ttl100(&mySerial, LORA_BAUD_RATE);
 
 
 static void printParameters(struct Configuration configuration);
-static 
-void printModuleInformation(struct ModuleInformation moduleInformation);
+static void printModuleInformation(struct ModuleInformation moduleInformation);
+
+static void handle_hearbeat(uint8_t package);
+static void handle_package(uint8_t package);
+
+static void control_bell1(bool on);
+static void control_bell2(bool on);
 
 
 /* ==================================================
@@ -232,6 +256,111 @@ static void printConfig()
 }
 
 
+void handle_hearbeat(uint8_t package)
+{
+	switch(package)
+	{
+		case MESSAGE_SENSOR1_CLEAR:
+		case MESSAGE_SENSOR1_TURBID:
+		intv_heartbeat[IND_SENSOR1] = millis();
+		break;
+
+		
+		case MESSAGE_SENSOR2_CLEAR:
+		case MESSAGE_SENSOR2_TURBID:
+		intv_heartbeat[IND_SENSOR2] = millis();
+		break;
+
+		case MESSAGE_SENSOR3_CLEAR:
+		case MESSAGE_SENSOR3_TURBID:
+		intv_heartbeat[IND_SENSOR3] = millis();
+		break;
+
+		case MESSAGE_BELL1_LARGE:
+		intv_heartbeat[IND_BELL1_LARGE] = millis();
+		break;
+
+		case MESSAGE_BELL1_SMALL:
+		intv_heartbeat[IND_BELL1_SMALL] = millis();
+		break;
+
+		case MESSAGE_BELL2_LARGE:
+		intv_heartbeat[IND_BELL2_LARGE] = millis();
+		break;
+
+		case MESSAGE_BELL2_SMALL:
+		intv_heartbeat[IND_BELL2_SMALL] = millis();
+		break;
+	}
+
+	uint32_t millis_curr = millis();
+	for(uint8_t i=0; i<LORA_NUM_CLIENT; ++i)
+	{
+		if(millis_curr - intv_heartbeat[i] > TIME_HEARTBEAT)
+		{
+			//
+		}
+	}
+}
+
+
+void handle_package(uint8_t package)
+{
+	switch(package)
+	{
+		case MESSAGE_BELL1_LARGE:
+		case MESSAGE_BELL1_SMALL:
+		case MESSAGE_BELL2_LARGE:
+		case MESSAGE_BELL2_SMALL:
+		break;
+
+		case MESSAGE_SENSOR1_TURBID:
+		case MESSAGE_SENSOR2_TURBID:
+		control_bell1(HIGH);
+		break;
+
+		case MESSAGE_SENSOR3_TURBID:
+		control_bell2(HIGH);
+		break;
+
+		case MESSAGE_SENSOR1_CLEAR:
+		case MESSAGE_SENSOR2_CLEAR:
+		control_bell1(LOW);
+		break;
+
+		case MESSAGE_SENSOR3_CLEAR:
+		control_bell2(LOW);
+		break;
+	}
+}
+
+
+void control_bell1(bool on)
+{
+	struct message_t
+	{
+		uint8_t package[1];
+	} message;
+
+	*(uint8_t*)(message.package) = on ? MESSAGE_TURN_ON_BELL1 : MESSAGE_TURN_OFF_BELL1;
+
+	e32ttl100.sendBroadcastFixedMessage(CHAN_BELL1, &message, sizeof(message_t));
+}
+
+
+void control_bell2(bool on)
+{
+	struct message_t
+	{
+		uint8_t package[1];
+	} message;
+
+	*(uint8_t*)(message.package) = on ? MESSAGE_TURN_ON_BELL2 : MESSAGE_TURN_OFF_BELL2;
+
+	e32ttl100.sendBroadcastFixedMessage(CHAN_BELL2, &message, sizeof(message_t));
+}
+
+
 /* ==================================================
 ** Extern function definition
 **
@@ -287,67 +416,17 @@ void Lora_init()
 }
 
 
-// ResponseStatus Lora_send_fixedMessage(byte ADDH, byte ADDL, byte CHAN, String message)
-// {
-//     ResponseStatus rs = e32ttl100.sendFixedMessage(ADDH, ADDL, CHAN, message);
-
-//     // Serial.println("Send message to 00 03 04");
-//     // Serial.println(rs.getResponseDescription());
-
-//     return rs;
-// }
-
-
-// void Lora_receive_fixedMessage()
-// {
-//     if (e32ttl100.available() > 1)
-//     {
-//         ResponseContainer rs = e32ttl100.receiveMessage();
-//         // First of all get the data
-//         String message = rs.data;
-
-//         Serial.println(rs.status.getResponseDescription());
-//         Serial.println(message);
-//     }
-// }
-
-
-void Lora_upd_turbidity()
+void Lora_receive_message()
 {
-	// static uint32_t intv = millis();
+	if(e32ttl100.available() < 1) {return;}
 
-	// if(millis() - intv < TIME_UPD_TURBIDITY) {return;}
+	ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
+	message_t message = *(message_t *)rsc.data;
+	uint8_t package = message.package[0];
 
-	// uint8_t turbidity = Turbidity_is_true();
-	// String  message   = String(LORA_ID_SLAVE) + "-" + String(turbidity);
+	LOG.inf("[Lora] receive package: '%#04X'", package);
+	free(rsc.data);
 
-	// ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
-
-	// Serial.print("Lora message: ");
-	// Serial.println(message);
-	
-    // Serial.println("Send message to 00 03 04");
-    // Serial.println(rs.getResponseDescription());
-
-	// intv = millis();
-}
-
-
-void Lora_send_turbidityState(uint8_t state)
-{
-	#if  LORA_ADDL == ADDL_SENSOR1
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
-
-	#elif LORA_ADDL == ADDL_SENSOR2
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
-
-	#elif LORA_ADDL == ADDL_SENSOR3
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
-
-	#endif
-
-	String message = "";
-	message += package;
-
-	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, message);
+	handle_hearbeat(package);
+	handle_package (package);
 }
