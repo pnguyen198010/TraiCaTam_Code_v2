@@ -46,16 +46,19 @@
 #define MESSAGE_SENSOR3_TURBID	0x21
 
 // Messages of gateway: which bell will alert
-#define MESSAGE_ALERT_BELL1		0x30
-#define MESSAGE_ALERT_BELL2		0x31
+#define MESSAGE_TURN_OFF_BELL1	0x30
+#define MESSAGE_TURN_ON_BELL1	0x31
+
+#define MESSAGE_TURN_OFF_BELL2	0x40
+#define MESSAGE_TURN_ON_BELL2	0x41
 
 // Messages of bell 1: heart beat
-#define MESSAGE_BELL1_LARGE		0x40
-#define MESSAGE_BELL1_SMALL		0x41
+#define MESSAGE_BELL1_LARGE		0x50
+#define MESSAGE_BELL1_SMALL		0x51
 
 // Messages of bell 2: heart beat
-#define MESSAGE_BELL2_LARGE		0x42
-#define MESSAGE_BELL2_SMALL		0x43
+#define MESSAGE_BELL2_LARGE		0x52
+#define MESSAGE_BELL2_SMALL		0x53
 
 
 /* ==================================================
