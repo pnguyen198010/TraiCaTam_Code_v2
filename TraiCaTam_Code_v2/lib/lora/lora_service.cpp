@@ -110,10 +110,29 @@
 #define MESSAGE_BELL2_SMALL		0x43
 
 
+#define LORA_NUM_CLIENT			7
+#define LORA_NUM_SENSOR			3
+#define LORA_NUM_BELL_LARGE		2
+#define LORA_NUM_BELL_SMALL		2
+
+
 /* ==================================================
 ** Type definition
 **
 ** =============================================== */
+
+
+typedef enum
+{
+	IND_SENSOR1 = 0,
+	IND_SENSOR2,
+	IND_SENSOR3,
+	IND_BELL1_LARGE,
+	IND_BELL1_SMALL,
+	IND_BELL2_LARGE,
+	IND_BELL2_SMALL,
+	
+} ind_client_t;
 
 
 struct message_t
@@ -137,6 +156,10 @@ struct message_t
 ** =============================================== */
 
 
+static const uint32_t TIME_HEARTBEAT = 60*1000;
+
+static uint32_t intv_heartbeat[LORA_NUM_CLIENT];
+
 static Log_t LOG;
 static LoRa_E32 e32ttl100(&Serial2, LORA_BAUD_RATE);
 
@@ -148,8 +171,9 @@ static LoRa_E32 e32ttl100(&Serial2, LORA_BAUD_RATE);
 
 
 static void printParameters(struct Configuration configuration);
-static 
-void printModuleInformation(struct ModuleInformation moduleInformation);
+static void printModuleInformation(struct ModuleInformation moduleInformation);
+
+static void handle_hearbeat(uint8_t package);
 
 
 /* ==================================================
@@ -225,6 +249,54 @@ static void printConfig()
 }
 
 
+void handle_hearbeat(uint8_t package)
+{
+	switch(package)
+	{
+		case MESSAGE_SENSOR1_CLEAR:
+		case MESSAGE_SENSOR1_TURBID:
+		intv_heartbeat[IND_SENSOR1] = millis();
+		break;
+
+		
+		case MESSAGE_SENSOR2_CLEAR:
+		case MESSAGE_SENSOR2_TURBID:
+		intv_heartbeat[IND_SENSOR2] = millis();
+		break;
+
+		case MESSAGE_SENSOR3_CLEAR:
+		case MESSAGE_SENSOR3_TURBID:
+		intv_heartbeat[IND_SENSOR3] = millis();
+		break;
+
+		case MESSAGE_BELL1_LARGE:
+		intv_heartbeat[IND_BELL1_LARGE] = millis();
+		break;
+
+		case MESSAGE_BELL1_SMALL:
+		intv_heartbeat[IND_BELL1_SMALL] = millis();
+		break;
+
+		case MESSAGE_BELL2_LARGE:
+		intv_heartbeat[IND_BELL2_LARGE] = millis();
+		break;
+
+		case MESSAGE_BELL2_SMALL:
+		intv_heartbeat[IND_BELL2_SMALL] = millis();
+		break;
+	}
+
+	uint32_t millis_curr = millis();
+	for(uint8_t i=0; i<LORA_NUM_CLIENT; ++i)
+	{
+		if(millis_curr - intv_heartbeat[i] > TIME_HEARTBEAT)
+		{
+			//
+		}
+	}
+}
+
+
 /* ==================================================
 ** Extern function definition
 **
@@ -290,6 +362,8 @@ void Lora_receive_message()
 
 	LOG.inf("[Lora] receive package: '%#04X'", package);
 	free(rsc.data);
+
+	handle_hearbeat(package);
 
 	if (package == MESSAGE_SENSOR1_CLEAR)
 	{
