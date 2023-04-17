@@ -40,4 +40,5 @@ void setup()
 void loop() 
 {
   Turbidity_read();
+  Servo_upd_pos();
 }

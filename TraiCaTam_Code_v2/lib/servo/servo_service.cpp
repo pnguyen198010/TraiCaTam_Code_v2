@@ -89,8 +89,10 @@ void Servo_init()
     servo.attach(SERVO_PIN);
 
     pos = servo.read();
-    servo.write(pos);
+    servo.write(0);
+
     delay(pos*TIME_PER_POS);
+    pos = 0;
 }
 
 
