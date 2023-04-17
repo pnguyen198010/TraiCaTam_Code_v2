@@ -5,6 +5,7 @@
 
 
 #include "lora_service.h"
+#include "lora_address.h"
 
 #include "turbidity.h"
 
@@ -23,17 +24,63 @@
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
-#define LORA_ID_SLAVE	"T0"
+// #define THIS_IS_LORA_OF_GATEWAY
+#define THIS_IS_LORA_OF_SENSOR1
+// #define THIS_IS_LORA_OF_SENSOR2
+// #define THIS_IS_LORA_OF_SENSOR3
+// #define THIS_IS_LORA_OF_BELL1_LARGE
+// #define THIS_IS_LORA_OF_BELL1_SMALL
+// #define THIS_IS_LORA_OF_BELL2_LARGE
+// #define THIS_IS_LORA_OF_BELL2_SMALL
 
-#define LORA_ADDL       0x01
-// #define LORA_ADDL		0x02
-// #define LORA_ADDL		0x03
-#define LORA_ADDH       0x00
-#define LORA_CHAN       0x19
+#ifdef THIS_IS_LORA_OF_GATEWAY
+#define LORA_ADDL   ADDL_GATEWAY
+#define LORA_ADDH	ADDH_GATEWAY
+#define LORA_CHAN	CHAN_GATEWAY
+#endif
 
-#define LORA_ADDL_GATEWAY	0x0
-#define LORA_ADDH_GATEWAY	0x1
-#define LORA_CHAN_GATEWAY	0x18
+#ifdef THIS_IS_LORA_OF_SENSOR1
+#define LORA_ADDL   ADDL_SENSOR1
+#define LORA_ADDH	ADDH_SENSOR1
+#define LORA_CHAN	CHAN_SENSOR1
+#endif
+
+#ifdef THIS_IS_LORA_OF_SENSOR2
+#define LORA_ADDL   ADDL_SENSOR2
+#define LORA_ADDH	ADDH_SENSOR2
+#define LORA_CHAN	CHAN_SENSOR2
+#endif
+
+#ifdef THIS_IS_LORA_OF_SENSOR3
+#define LORA_ADDL   ADDL_SENSOR3
+#define LORA_ADDH	ADDH_SENSOR3
+#define LORA_CHAN	CHAN_SENSOR3
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL1_LARGE
+#define LORA_ADDL   ADDL_BELL1_LARGE
+#define LORA_ADDH	ADDH_BELL1_LARGE
+#define LORA_CHAN	CHAN_BELL1_LARGE
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL1_SMALL
+#define LORA_ADDL   ADDL_BELL1_SMALL
+#define LORA_ADDH	ADDH_BELL1_SMALL
+#define LORA_CHAN	CHAN_BELL1_SMALL
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL2_LARGE
+#define LORA_ADDL   ADDL_BELL2_LARGE
+#define LORA_ADDH	ADDH_BELL2_LARGE
+#define LORA_CHAN	CHAN_BELL2_LARGE
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL2_SMALL
+#define LORA_ADDL   ADDL_BELL2_SMALL
+#define LORA_ADDH	ADDH_BELL2_SMALL
+#define LORA_CHAN	CHAN_BELL2_SMALL
+#endif
+
 
 // Messages of sensor 1: state
 #define MESSAGE_SENSOR1_CLEAR	0x00
@@ -288,13 +335,13 @@ void Lora_upd_turbidity()
 
 void Lora_send_turbidityState(uint8_t state)
 {
-	#if  LORA_ADDL == 0x01
+	#if  LORA_ADDL == ADDL_SENSOR1
 	char package = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
 
-	#elif LORA_ADDL == 0x02
+	#elif LORA_ADDL == ADDL_SENSOR2
 	char package = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
 
-	#elif LORA_ADDL == 0x03
+	#elif LORA_ADDL == ADDL_SENSOR3
 	char package = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
 
 	#endif
@@ -302,5 +349,5 @@ void Lora_send_turbidityState(uint8_t state)
 	String message = "";
 	message += package;
 
-	e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
+	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, message);
 }
