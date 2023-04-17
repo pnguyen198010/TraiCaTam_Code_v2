@@ -119,7 +119,7 @@
 
 struct message_t
 {
-	byte package[1];
+	byte package[4];
 };
 
 
