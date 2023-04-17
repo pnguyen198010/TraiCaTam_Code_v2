@@ -91,9 +91,10 @@ void Servo_init()
 
 void Servo_upd_pos()
 {
-    static uint32_t intv = millis();
+    static uint32_t intv_wait_sweep = millis();
+    static uint32_t intv_per_pos = millis();
 
-    if(millis() - intv < TIME_WAIT_SWEEP) {return;}
+    if(millis() - intv_wait_sweep < TIME_WAIT_SWEEP) {return;}
 
     Turbidity_disable();
 
