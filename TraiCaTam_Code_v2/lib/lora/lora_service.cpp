@@ -18,11 +18,11 @@
 ** =============================================== */
 
 
-#define LORA_RX         5
-#define LORA_TX         6
-#define LORA_AUX        4
-#define LORA_M0         7
-#define LORA_M1         8
+#define LORA_RX         16
+#define LORA_TX         17
+#define LORA_AUX        21
+#define LORA_M0         18
+#define LORA_M1         19
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
@@ -117,7 +117,7 @@
 
 struct message_t
 {
-	byte package[4];
+	byte package[1];
 };
 
 
@@ -135,19 +135,6 @@ struct message_t
 **
 ** =============================================== */
 
-
-// static const byte LORA_RX        = 3;
-// static const byte LORA_TX        = 4;
-// static const byte LORA_AUX       = 5;
-// static const byte LORA_M0        = 5;
-// static const byte LORA_M1        = 6;
-
-// static const byte LORA_ADDL      = 0x0;
-// static const byte LORA_ADDH      = 0x2;
-// static const byte LORA_CHAN      = 0x19;
-
-// static const uint32_t TIME_UPD_TURBIDITY = 1 * 60 * 1000;
-static const uint32_t TIME_UPD_TURBIDITY = 60 * 1000;
 
 static Log_t LOG;
 static LoRa_E32 e32ttl100(&Serial2, LORA_BAUD_RATE);
@@ -292,7 +279,7 @@ void Lora_init()
 }
 
 
-void Lora_receive_structComplex()
+void Lora_receive_message()
 {
     if (e32ttl100.available() > 0)
 	{

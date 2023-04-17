@@ -37,7 +37,7 @@
 
 void Lora_init();
 
-void Lora_receive_structComplex();
+void Lora_receive_message();
 
 
 /* ==================================================

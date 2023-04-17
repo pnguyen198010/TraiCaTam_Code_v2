@@ -34,5 +34,5 @@ void setup()
 
 void loop() 
 {
-  Lora_receive_structComplex();
+  Lora_receive_message();
 }
