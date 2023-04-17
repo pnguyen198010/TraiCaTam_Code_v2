@@ -282,6 +282,8 @@ void turbidity_t::read()
 
 void turbidity_t::enable()
 {
+    if(flg_disable == false) {return;}
+    
     flg_disable = false;
     LOG.inf("[Tubidity] sensor is enabled");
 
@@ -292,6 +294,8 @@ void turbidity_t::enable()
 
 void turbidity_t::disable()
 {
+    if(flg_disable) {return;}
+
     flg_disable = true;
     LOG.inf("[Turbidity] sensor is disabled");
 
