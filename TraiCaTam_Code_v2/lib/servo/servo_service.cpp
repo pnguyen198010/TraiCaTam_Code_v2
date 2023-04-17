@@ -8,6 +8,7 @@
 
 #include <Servo.h>
 
+#include "log_service.h"
 #include "turbidity.h"
 
 
@@ -52,6 +53,7 @@ static const uint32_t TIME_PER_POS    = 15;
 static const uint32_t TIME_180_POS    = 180 * TIME_PER_POS;
 
 
+static Log_t LOG;
 static Servo servo;
 
 
@@ -86,13 +88,16 @@ static uint8_t count_sweep = 0;
 
 void Servo_init()
 {
-    servo.attach(SERVO_PIN);
+    LOG.inf("[servo] start init");
 
-    pos = servo.read();
+    servo.attach(SERVO_PIN);
     servo.write(0);
 
+    pos = servo.read();
     delay(pos*TIME_PER_POS);
     pos = 0;
+
+    LOG.inf("[servo] end init");
 }
 
 
@@ -104,6 +109,9 @@ void Servo_upd_pos()
     if(millis() - intv_wait_sweep >= TIME_WAIT_SWEEP
     && count_sweep == 0) 
     {
+        LOG.raw("\n");
+        LOG.inf("[servo] sweep start");
+
         Turbidity_disable();
         count_sweep  = 2*SERVO_NUM_SWEEP;
         intv_180_pos = millis();
@@ -113,24 +121,41 @@ void Servo_upd_pos()
     {
         uint32_t dur = millis() - intv_180_pos;
 
-        if(dur > TIME_180_POS)
+        if(dur > TIME_180_POS
+        && (pos >= 180 || pos <= 0))
         {
             count_sweep -= 1;
             intv_180_pos = millis();
             dur          = 0;
+
+            LOG.raw("\n");
+            LOG.inf("[servo] count_sweep: %d", count_sweep);
         }
 
         if(count_sweep != 0)
         {
-            pos = map(pos, dur, TIME_180_POS, 0, 180);
-            pos = count_sweep%2 == 1 ? pos : 180 - pos;
+            pos = map(dur, 0, TIME_180_POS, 0, 180);
+            pos = count_sweep%2 == 0 ? pos : 180 - pos;
+            pos = constrain(pos, 0, 180);
             servo.write(pos);
-        }
-    }
 
-    if(count_sweep == 0)
-    {
-        Turbidity_enable();
-        intv_wait_sweep = millis();
+            Serial.print("I (");
+            Serial.print(millis());
+            Serial.print(") dur/time: ");
+            Serial.print(dur);
+            Serial.print("/");
+            Serial.print(TIME_180_POS);
+            Serial.print(" | pos: ");
+            Serial.print(pos);
+            Serial.print("\r");
+        }
+
+        if(count_sweep == 0)
+        {
+            LOG.inf("[servo] sweep end");
+
+            Turbidity_enable();
+            intv_wait_sweep = millis();
+        }
     }
 }
