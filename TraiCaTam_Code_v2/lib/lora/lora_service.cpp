@@ -43,7 +43,7 @@
 
 // Messages of sensor 3: state
 #define MESSAGE_SENSOR3_CLEAR	0x20
-#define MESSAGE_SENSOR4_TURBID	0x21
+#define MESSAGE_SENSOR3_TURBID	0x21
 
 // Messages of gateway: which bell will alert
 #define MESSAGE_ALERT_BELL1		0x30
