@@ -7,6 +7,10 @@
 #include "lora_service.h"
 #include "lora_address.h"
 
+#include <LoRa_E32.h>
+#include <SoftwareSerial.h>
+
+#include "log_service.h"
 #include "turbidity.h"
 
 
@@ -144,6 +148,7 @@
 // static const uint32_t TIME_UPD_TURBIDITY = 1 * 60 * 1000;
 static const uint32_t TIME_UPD_TURBIDITY = 60 * 1000;
 
+static Log_t LOG;
 static SoftwareSerial mySerial(LORA_RX, LORA_TX);
 static LoRa_E32 e32ttl100(&mySerial, LORA_BAUD_RATE);
 
@@ -300,8 +305,8 @@ void Lora_send_turbidityState(uint8_t state)
 
 	#endif
 
-	String message = "";
-	message += package;
+	String message = String(package);
+	LOG.inf("[lora] package: '%c' | message: '%s'", package, message.c_str());
 
 	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, message);
 }
