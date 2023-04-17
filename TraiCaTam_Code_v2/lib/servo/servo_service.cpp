@@ -48,7 +48,7 @@
 
 // static const float TIME_SWEEP = (float) SERVO_NUM_SWEEP * 360 * TIME_PER_POS / 1000;
 static const uint32_t TIME_WAIT_SWEEP = 1 * 10 * 1000;
-static const uint32_t TIME_PER_POS    = 1 * 10 * 1000;
+static const uint32_t TIME_PER_POS    = 15;
 static const uint32_t TIME_180_POS    = 180 * TIME_PER_POS;
 
 
