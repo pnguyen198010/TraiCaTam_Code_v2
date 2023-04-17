@@ -26,6 +26,8 @@
 #define LORA_ID_SLAVE	"T0"
 
 #define LORA_ADDL       0x01
+// #define LORA_ADDL		0x02
+// #define LORA_ADDL		0x03
 #define LORA_ADDH       0x00
 #define LORA_CHAN       0x19
 
@@ -222,8 +224,9 @@ void Lora_init()
 	configuration.SPED.uartBaudRate = UART_BPS_9600;
 	configuration.SPED.uartParity   = MODE_00_8N1;
 
-	ResponseStatus rs = e32ttl100.setConfiguration(configuration, WRITE_CFG_PWR_DWN_LOSE);
+	e32ttl100.setConfiguration(configuration, WRITE_CFG_PWR_DWN_LOSE);
 
+	// ResponseStatus rs = e32ttl100.setConfiguration(configuration, WRITE_CFG_PWR_DWN_LOSE);
 	// Serial.println(rs.getResponseDescription());
 	// Serial.println(rs.code);
 	// printParameters(configuration);
@@ -285,6 +288,19 @@ void Lora_upd_turbidity()
 
 void Lora_send_turbidityState(uint8_t state)
 {
+	#if  LORA_ADDL == 0x01
+	char package = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
+
+	#elif LORA_ADDL == 0x02
+	char package = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
+
+	#elif LORA_ADDL == 0x03
+	char package = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
+
+	#endif
+
 	String message = "";
-	ResponseStatus rs = e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
+	message += package;
+
+	e32ttl100.sendFixedMessage(LORA_ADDH_GATEWAY, LORA_ADDL_GATEWAY, LORA_CHAN_GATEWAY, message);
 }

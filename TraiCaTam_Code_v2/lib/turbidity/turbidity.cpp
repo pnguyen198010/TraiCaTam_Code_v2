@@ -47,8 +47,6 @@ const uint8_t STATE_CLEAR   = !STATE_TURBID;
 static const int8_t  VCC = 2;
 static const uint8_t PIN = 4;
 
-static const uint8_t STATE_TURBID;
-static const uint8_t STATE_CLEAR;
 static const uint8_t STATE_DEBOUNCE = 3;
 
 static const uint32_t TIME_DEBOUNCE = 2UL*1000UL;

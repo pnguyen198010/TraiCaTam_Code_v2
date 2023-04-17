@@ -102,7 +102,8 @@ void Turbidity_read();
 ** =============================================== */
 
 
-//
+extern const uint8_t STATE_TURBID;
+extern const uint8_t STATE_CLEAR;
 
 
 #endif
