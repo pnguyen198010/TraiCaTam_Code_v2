@@ -117,7 +117,10 @@
 ** =============================================== */
 
 
-//
+struct message_t
+{
+	byte package[1];
+};
 
 
 /* ==================================================
@@ -294,19 +297,18 @@ void Lora_init()
 
 void Lora_send_turbidityState(uint8_t state)
 {
+	message_t message;
+
 	#if  LORA_ADDL == ADDL_SENSOR1
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
 
 	#elif LORA_ADDL == ADDL_SENSOR2
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
 
 	#elif LORA_ADDL == ADDL_SENSOR3
-	char package = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
 
 	#endif
 
-	String message = String(package);
-	LOG.inf("[lora] package: '%c' | message: '%s'", package, message.c_str());
-
-	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, message);
+	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
 }
