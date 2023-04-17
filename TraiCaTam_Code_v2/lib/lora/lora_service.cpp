@@ -26,6 +26,7 @@
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
+
 #define THIS_IS_LORA_OF_GATEWAY
 // #define THIS_IS_LORA_OF_SENSOR1
 // #define THIS_IS_LORA_OF_SENSOR2
@@ -94,7 +95,7 @@
 
 // Messages of sensor 3: state
 #define MESSAGE_SENSOR3_CLEAR	0x20
-#define MESSAGE_SENSOR4_TURBID	0x21
+#define MESSAGE_SENSOR3_TURBID	0x21
 
 // Messages of gateway: which bell will alert
 #define MESSAGE_ALERT_BELL1		0x30
@@ -281,12 +282,79 @@ void Lora_init()
 
 void Lora_receive_message()
 {
-    if (e32ttl100.available() > 0)
+	if(e32ttl100.available() < 1) {return;}
+
+	ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
+	message_t message = *(message_t *)rsc.data;
+	uint8_t package = message.package[0];
+
+	LOG.inf("[Lora] receive package: '%#04X'", package);
+	free(rsc.data);
+
+	if (package == MESSAGE_SENSOR1_CLEAR)
 	{
-        ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
-        message_t message = *(message_t*) rsc.data;
-		
-		LOG.inf("[Lora] receive package: '%#04X'", message.package[0]);
-        free(rsc.data);
-    }
+
+		return;
+	}
+
+	if(package == MESSAGE_SENSOR1_TURBID)
+	{
+
+
+		return;
+	}
+
+	if (package == MESSAGE_SENSOR2_CLEAR)
+	{
+
+		return;
+	}
+
+	if(package == MESSAGE_SENSOR2_TURBID)
+	{
+
+
+		return;
+	}
+
+	if (package == MESSAGE_SENSOR3_CLEAR)
+	{
+
+		return;
+	}
+
+	if(package == MESSAGE_SENSOR3_TURBID)
+	{
+
+
+		return;
+	}
+
+	if(package == MESSAGE_BELL1_LARGE)
+	{
+
+
+		return;
+	}
+
+	if(package == MESSAGE_BELL1_SMALL)
+	{
+
+
+		return;
+	}
+
+	if(package == MESSAGE_BELL2_LARGE)
+	{
+
+
+		return;
+	}
+
+	if(package == MESSAGE_BELL2_SMALL)
+	{
+
+
+		return;
+	}
 }
