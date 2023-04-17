@@ -339,3 +339,15 @@ void Turbidity_read()
 {
     sensor.read();
 }
+
+
+void Turbidity_disable()
+{
+    sensor.disable();
+}
+
+
+void Turbidity_enable()
+{
+    sensor.enable();
+}

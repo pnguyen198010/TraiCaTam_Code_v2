@@ -82,7 +82,10 @@ static const uint32_t TIME_WAIT_SWEEP = 1 * 10 * 1000;
 void Servo_init()
 {
     servo.attach(SERVO_PIN);
+
+    pos = servo.read();
     servo.write(pos);
+    delay(pos*SERVO_TIME_PER_POS);
 }
 
 

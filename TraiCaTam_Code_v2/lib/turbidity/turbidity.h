@@ -95,6 +95,9 @@ class turbidity_t
 void Turbidity_init();
 void Turbidity_read();
 
+void Turbidity_disable();
+void Turbidity_enable();
+
 
 /* ==================================================
 ** Extern variables
