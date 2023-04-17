@@ -321,7 +321,7 @@ void Lora_receive_structComplex()
         ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
         message_t message = *(message_t*) rsc.data;
 		
-		LOG.inf("[Lora] receive package: '%02x'", message.package);
+		LOG.inf("[Lora] receive package: '%#04X'", message.package);
         free(rsc.data);
     }
 }
