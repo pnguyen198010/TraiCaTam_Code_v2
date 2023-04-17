@@ -8,10 +8,8 @@
 #include "lora_address.h"
 
 #include <LoRa_E32.h>
-#include <SoftwareSerial.h>
 
 #include "log_service.h"
-#include "turbidity.h"
 
 
 /* ==================================================
@@ -152,8 +150,7 @@ struct message_t
 static const uint32_t TIME_UPD_TURBIDITY = 60 * 1000;
 
 static Log_t LOG;
-static SoftwareSerial mySerial(LORA_RX, LORA_TX);
-static LoRa_E32 e32ttl100(&mySerial, LORA_BAUD_RATE);
+static LoRa_E32 e32ttl100(&Serial2, LORA_BAUD_RATE);
 
 
 /* ==================================================
@@ -292,25 +289,6 @@ void Lora_init()
 
 	digitalWrite(LORA_M0, LOW);
 	digitalWrite(LORA_M1, LOW);
-}
-
-
-void Lora_send_turbidityState(uint8_t state)
-{
-	message_t message;
-
-	#if  LORA_ADDL == ADDL_SENSOR1
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
-
-	#elif LORA_ADDL == ADDL_SENSOR2
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
-
-	#elif LORA_ADDL == ADDL_SENSOR3
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
-
-	#endif
-
-	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
 }
 
 
