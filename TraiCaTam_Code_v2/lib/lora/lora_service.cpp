@@ -174,6 +174,7 @@ static void printParameters(struct Configuration configuration);
 static void printModuleInformation(struct ModuleInformation moduleInformation);
 
 static void handle_hearbeat(uint8_t package);
+static void handle_package(uint8_t package);
 
 
 /* ==================================================
@@ -297,6 +298,35 @@ void handle_hearbeat(uint8_t package)
 }
 
 
+void handle_package(uint8_t package)
+{
+	switch(package)
+	{
+		case MESSAGE_BELL1_LARGE:
+		case MESSAGE_BELL1_SMALL:
+		case MESSAGE_BELL2_LARGE:
+		case MESSAGE_BELL2_SMALL:
+		//
+		break;
+
+		case MESSAGE_SENSOR1_TURBID:
+		case MESSAGE_SENSOR2_TURBID:
+		// Cảnh báo chuông 1
+		break;
+
+		case MESSAGE_SENSOR3_TURBID:
+		// Cảnh báo chuông 2
+		break;
+
+		case MESSAGE_SENSOR1_CLEAR:
+		case MESSAGE_SENSOR2_CLEAR:
+		case MESSAGE_SENSOR3_CLEAR:
+		//
+		break;
+	}
+}
+
+
 /* ==================================================
 ** Extern function definition
 **
@@ -364,71 +394,5 @@ void Lora_receive_message()
 	free(rsc.data);
 
 	handle_hearbeat(package);
-
-	if (package == MESSAGE_SENSOR1_CLEAR)
-	{
-
-		return;
-	}
-
-	if(package == MESSAGE_SENSOR1_TURBID)
-	{
-
-
-		return;
-	}
-
-	if (package == MESSAGE_SENSOR2_CLEAR)
-	{
-
-		return;
-	}
-
-	if(package == MESSAGE_SENSOR2_TURBID)
-	{
-
-
-		return;
-	}
-
-	if (package == MESSAGE_SENSOR3_CLEAR)
-	{
-
-		return;
-	}
-
-	if(package == MESSAGE_SENSOR3_TURBID)
-	{
-
-
-		return;
-	}
-
-	if(package == MESSAGE_BELL1_LARGE)
-	{
-
-
-		return;
-	}
-
-	if(package == MESSAGE_BELL1_SMALL)
-	{
-
-
-		return;
-	}
-
-	if(package == MESSAGE_BELL2_LARGE)
-	{
-
-
-		return;
-	}
-
-	if(package == MESSAGE_BELL2_SMALL)
-	{
-
-
-		return;
-	}
+	handle_package (package);
 }
