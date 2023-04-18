@@ -11,6 +11,7 @@
 #include <SoftwareSerial.h>
 
 #include "log_service.h"
+#include "bell.h"
 
 
 /* ==================================================
@@ -35,6 +36,22 @@
 // #define THIS_IS_LORA_OF_BELL1_SMALL
 // #define THIS_IS_LORA_OF_BELL2_LARGE
 // #define THIS_IS_LORA_OF_BELL2_SMALL
+
+#ifdef THIS_IS_LORA_OF_BELL1_LARGE
+#define THIS_IS_LORA_OF_BELL1
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL1_SMALL
+#define THIS_IS_LORA_OF_BELL1
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL2_LARGE
+#define THIS_IS_LORA_OF_BELL2
+#endif
+
+#ifdef THIS_IS_LORA_OF_BELL2_SMALL
+#define THIS_IS_LORA_OF_BELL2
+#endif
 
 #ifdef THIS_IS_LORA_OF_GATEWAY
 #define LORA_ADDL   ADDL_GATEWAY
@@ -165,8 +182,10 @@ static LoRa_E32 e32ttl100(&mySerial, LORA_BAUD_RATE);
 
 
 static void printParameters(struct Configuration configuration);
-static 
-void printModuleInformation(struct ModuleInformation moduleInformation);
+static void printModuleInformation(struct ModuleInformation moduleInformation);
+
+static void handle_package(uint8_t package);
+static void send_heartbeat();
 
 
 /* ==================================================
@@ -242,6 +261,67 @@ static void printConfig()
 }
 
 
+void handle_package(uint8_t package)
+{
+	#ifdef THIS_IS_LORA_OF_BELL1
+	switch(package)
+	{
+		case MESSAGE_TURN_OFF_BELL1:
+		Bell_turn_off();
+		send_heartbeat();
+		break;
+
+		case MESSAGE_TURN_ON_BELL1:
+		Bell_turn_on();
+		send_heartbeat();
+		break;
+	}
+	#endif
+
+	#ifdef THIS_IS_LORA_OF_BELL2
+	switch(package)
+	{
+		case MESSAGE_TURN_OFF_BELL2:
+		Bell_turn_off();
+		send_heartbeat();
+		break;
+
+		case MESSAGE_TURN_ON_BELL2:
+		Bell_turn_on();
+		send_heartbeat();
+		break;
+	}
+	#endif
+}
+
+
+void send_heartbeat()
+{
+	struct message_t
+	{
+		byte package[1];
+	} message;
+
+	#ifdef THIS_IS_LORA_OF_BELL1_LARGE
+	*(byte*)(message.package) = MESSAGE_BELL1_LARGE;
+	#endif
+
+	#ifdef THIS_IS_LORA_OF_BELL1_SMALL
+	*(byte*)(message.package) = MESSAGE_BELL1_SMALL;
+	#endif
+
+	#ifdef THIS_IS_LORA_OF_BELL2_LARGE
+	*(byte*)(message.package) = MESSAGE_BELL2_LARGE;
+	#endif
+
+	#ifdef THIS_IS_LORA_OF_BELL2_SMALL
+	*(byte*)(message.package) = MESSAGE_BELL2_SMALL;
+	#endif
+
+	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
+}
+
+
 /* ==================================================
 ** Extern function definition
 **
@@ -297,26 +377,16 @@ void Lora_init()
 }
 
 
-void Lora_send_turbidityState(uint8_t state)
+void Lora_receive_message()
 {
-	struct message_t
-	{
-		uint8_t package[1];
-	} message;
+	if(e32ttl100.available() < 1) {return;}
 
-	#if  LORA_ADDL == ADDL_SENSOR1
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
+	ResponseStructContainer rsc = e32ttl100.receiveMessage(sizeof(message_t));
+	message_t message = *(message_t *)rsc.data;
+	uint8_t package = message.package[0];
 
-	#elif LORA_ADDL == ADDL_SENSOR2
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
+	LOG.inf("[Lora] receive package: '%#04X'", package);
+	free(rsc.data);
 
-	#elif LORA_ADDL == ADDL_SENSOR3
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
-
-	#endif
-
-	e32ttl100.sendFixedMessage(ADDH_GATEWAY, ADDL_GATEWAY, CHAN_GATEWAY, &message, sizeof(message_t));
-
-    // ResponseStatus rs = e32ttl100.sendFixedMessage(ADDH_GATEWAY,ADDL_GATEWAY,CHAN_GATEWAY,&message, sizeof(message_t));
-    // Serial.println(rs.getResponseDescription());
+	handle_package(package);
 }

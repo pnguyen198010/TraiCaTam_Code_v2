@@ -37,7 +37,7 @@
 
 void Lora_init();
 
-void Lora_send_turbidityState(uint8_t state);
+void Lora_receive_message();
 
 
 /* ==================================================

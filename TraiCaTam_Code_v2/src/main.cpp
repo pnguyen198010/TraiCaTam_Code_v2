@@ -35,5 +35,5 @@ void setup()
 
 void loop() 
 {
-
+  Lora_receive_message();
 }
