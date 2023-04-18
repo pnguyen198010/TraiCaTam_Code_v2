@@ -8,6 +8,7 @@
 #include <SoftwareSerial.h>
 
 #include "log_service.h"
+#include "bell.h"
 
 
 /* ==================================================
@@ -28,6 +29,7 @@
 void setup() 
 {
   Log_init();
+  Bell_init();
 }
 
 
