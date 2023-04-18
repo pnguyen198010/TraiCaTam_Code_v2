@@ -30,6 +30,8 @@
 void setup() 
 {
   Log_init();
+  Bell_init();
+  Lora_init();
 }
 
 
