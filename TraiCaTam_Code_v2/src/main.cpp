@@ -8,6 +8,7 @@
 #include <SoftwareSerial.h>
 
 #include "log_service.h"
+#include "bell.h"
 #include "lora_service.h"
 
 
@@ -29,7 +30,6 @@
 void setup() 
 {
   Log_init();
-  Lora_init();
 }
 
 
