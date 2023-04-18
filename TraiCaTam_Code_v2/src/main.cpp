@@ -8,7 +8,6 @@
 #include <SoftwareSerial.h>
 
 #include "log_service.h"
-#include "turbidity.h"
 #include "lora_service.h"
 
 
@@ -30,12 +29,11 @@
 void setup() 
 {
   Log_init();
-  Turbidity_init();
   Lora_init();
 }
 
 
 void loop() 
 {
-  Turbidity_read();
+
 }
