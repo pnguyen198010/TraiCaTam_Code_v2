@@ -49,8 +49,8 @@ static const uint8_t PIN = 2;
 
 static const uint8_t STATE_DEBOUNCE = 3;
 
-static const uint32_t TIME_DEBOUNCE  =  2UL*1000UL;
-static const uint32_t TIME_HEARTBEAT = 5UL*1000UL;
+static const uint32_t TIME_DEBOUNCE  =     60UL*1000UL;
+static const uint32_t TIME_HEARTBEAT = 2UL*60UL*1000UL;
 
 
 static Log_t       LOG;
