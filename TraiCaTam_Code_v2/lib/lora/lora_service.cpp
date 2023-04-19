@@ -87,28 +87,31 @@
 
 
 // Messages of sensor 1: state
-#define MESSAGE_SENSOR1_CLEAR	0x00
-#define MESSAGE_SENSOR1_TURBID	0x01
+#define PACKAGE_SENSOR1_CLEAR	0x00
+#define PACKAGE_SENSOR1_TURBID	0x01
 
 // Messages of sensor 2: state
-#define MESSAGE_SENSOR2_CLEAR	0x10
-#define MESSAGE_SENSOR2_TURBID	0x11
+#define PACKAGE_SENSOR2_CLEAR	0x10
+#define PACKAGE_SENSOR2_TURBID	0x11
 
 // Messages of sensor 3: state
-#define MESSAGE_SENSOR3_CLEAR	0x20
-#define MESSAGE_SENSOR4_TURBID	0x21
+#define PACKAGE_SENSOR3_CLEAR	0x20
+#define PACKAGE_SENSOR3_TURBID	0x21
 
 // Messages of gateway: which bell will alert
-#define MESSAGE_ALERT_BELL1		0x30
-#define MESSAGE_ALERT_BELL2		0x31
+#define PACKAGE_TURN_OFF_BELL1	0x30
+#define PACKAGE_TURN_ON_BELL1	0x31
+
+#define PACKAGE_TURN_OFF_BELL2	0x40
+#define PACKAGE_TURN_ON_BELL2	0x41
 
 // Messages of bell 1: heart beat
-#define MESSAGE_BELL1_LARGE		0x40
-#define MESSAGE_BELL1_SMALL		0x41
+#define PACKAGE_BELL1_LARGE		0x50
+#define PACKAGE_BELL1_SMALL		0x51
 
 // Messages of bell 2: heart beat
-#define MESSAGE_BELL2_LARGE		0x42
-#define MESSAGE_BELL2_SMALL		0x43
+#define PACKAGE_BELL2_LARGE		0x52
+#define PACKAGE_BELL2_SMALL		0x53
 
 
 /* ==================================================
@@ -303,13 +306,13 @@ void Lora_send_turbidityState(uint8_t state)
 	} message;
 
 	#if  LORA_ADDL == ADDL_SENSOR1
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR1_CLEAR : MESSAGE_SENSOR1_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? PACKAGE_SENSOR1_CLEAR : PACKAGE_SENSOR1_TURBID;
 
 	#elif LORA_ADDL == ADDL_SENSOR2
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR2_CLEAR : MESSAGE_SENSOR2_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? PACKAGE_SENSOR2_CLEAR : PACKAGE_SENSOR2_TURBID;
 
 	#elif LORA_ADDL == ADDL_SENSOR3
-	*(uint8_t*)(message.package) = state==STATE_CLEAR ? MESSAGE_SENSOR3_CLEAR : MESSAGE_SENSOR3_TURBID;
+	*(uint8_t*)(message.package) = state==STATE_CLEAR ? PACKAGE_SENSOR3_CLEAR : PACKAGE_SENSOR3_TURBID;
 
 	#endif
 
