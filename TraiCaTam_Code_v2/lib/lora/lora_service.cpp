@@ -18,11 +18,11 @@
 ** =============================================== */
 
 
+#define LORA_AUX        4
 #define LORA_RX         16
 #define LORA_TX         17
-#define LORA_AUX        21
-#define LORA_M0         18
-#define LORA_M1         19
+#define LORA_M1         18
+#define LORA_M0         19
 
 #define LORA_BAUD_RATE  UART_BPS_RATE_9600
 
