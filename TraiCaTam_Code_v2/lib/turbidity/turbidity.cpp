@@ -123,6 +123,9 @@ turbidity_t::turbidity_t(uint8_t pin, int8_t vcc)
     {
         pinMode(vcc, OUTPUT);
         digitalWrite(vcc, HIGH);
+
+        pinMode(pin, OUTPUT);
+        digitalWrite(pin, LOW);
     }
 
     this->pin = pin;
