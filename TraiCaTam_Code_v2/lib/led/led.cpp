@@ -13,8 +13,8 @@
 ** =============================================== */
 
 
-#define LED_PIN_GREEN               22
-#define LED_PIN_RED                 23
+#define LED_PIN_RED                 22
+#define LED_PIN_GREEN               23
 
 
 /* ==================================================

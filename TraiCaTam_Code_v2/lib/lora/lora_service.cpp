@@ -159,7 +159,7 @@ struct message_t
 ** =============================================== */
 
 
-static const uint32_t TIME_HEARTBEAT = 60*1000;
+static const uint32_t TIME_HEARTBEAT = 2UL*60UL*1000UL;
 
 static uint32_t intv_heartbeat[LORA_NUM_CLIENT];
 
