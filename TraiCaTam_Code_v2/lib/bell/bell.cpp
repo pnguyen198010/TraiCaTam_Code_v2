@@ -70,17 +70,17 @@
 void Bell_init()
 {
     pinMode(BELL_PIN, OUTPUT);
-    digitalWrite(BELL_PIN, LOW);
+    Bell_turn_off();
 }
 
 
 void Bell_turn_off()
 {
-    digitalWrite(BELL_PIN, LOW);
+    digitalWrite(BELL_PIN, HIGH);
 }
 
 
 void Bell_turn_on()
 {
-    digitalWrite(BELL_PIN, HIGH);
+    digitalWrite(BELL_PIN, LOW);
 }
