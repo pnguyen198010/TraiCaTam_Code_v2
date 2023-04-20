@@ -7,6 +7,7 @@
 #include <Arduino.h>
 
 #include "log_service.h"
+#include "led.h"
 #include "lora_service.h"
 
 
@@ -28,6 +29,7 @@
 void setup() 
 {
   Log_init();
+  Led_init();
   Lora_init();
 }
 
